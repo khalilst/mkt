@@ -2,8 +2,12 @@ version: "3.3"
 
 services:
   php:
-    image: composer:2.7
+    image: khalilst/mkt-php
     container_name: mkt_php
+    build:
+      context: ./.docker
+      dockerfile: Dockerfile_php
+    restart: unless-stopped
     working_dir: /var/www/backend
     volumes:
       - ./backend:/var/www/backend
