@@ -23,7 +23,7 @@
         </testsuite>
     </testsuites>
 
-    <source ignoreSuppressionOfDeprecations="true"
+    <source ignoreSuppressionOfDeprecations="false"
             ignoreIndirectDeprecations="true"
             restrictNotices="true"
             restrictWarnings="true"
