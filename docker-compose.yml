@@ -1,0 +1,24 @@
+version: "3.3"
+
+services:
+  php:
+    image: composer:2.7
+    container_name: mkt_php
+    working_dir: /var/www/backend
+    volumes:
+      - ./backend:/var/www/backend
+    ports:
+      - "8000:8000"
+    command: bash -c "composer install && php -S 0.0.0.0:8000 -t public"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: mkt_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mkt
+    ports:
+      - "3306:3306"
