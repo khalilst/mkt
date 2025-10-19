@@ -22,11 +22,13 @@ final class Version20251018195525 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<SQL
             CREATE TABLE measurement (
+                id INT AUTO_INCREMENT NOT NULL,
                 measurement_set_id INT NOT NULL,
                 timestamp DATETIME NOT NULL,
                 temperature DOUBLE PRECISION NOT NULL,
-                INDEX IDX_MEASURE_SET_ID (measurement_set_id),
-                PRIMARY KEY(measurement_set_id, timestamp)
+                INDEX IDX_MEASUREMENT_SET_ID (measurement_set_id),
+                INDEX IDX_MEASUREMENT_SET_ID_TIMESTAMP (measurement_set_id, timestamp),
+                PRIMARY KEY(id)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         SQL);
 

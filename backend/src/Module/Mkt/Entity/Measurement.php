@@ -1,16 +1,21 @@
 <?php
 
-namespace App\Entity;
+namespace App\Module\Mkt\Entity;
 
-use App\Repository\MeasurementRepository;
+use App\Module\Mkt\Repository\MeasurementRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MeasurementRepository::class)]
 class Measurement
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
     #[ORM\ManyToOne(inversedBy: 'measurements')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?MeasurementSet $measurement_set_id = null;
+    private ?MeasurementSet $measurement_set = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $timestamp = null;
@@ -18,14 +23,26 @@ class Measurement
     #[ORM\Column]
     private ?float $temperature = null;
 
-    public function getMeasurementSetId(): ?MeasurementSet
+    public function getId(): ?int
     {
-        return $this->measurement_set_id;
+        return $this->id;
     }
 
-    public function setMeasurementSetId(?MeasurementSet $measurement_set_id): static
+    public function setId(string $id): static
     {
-        $this->measurement_set_id = $measurement_set_id;
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getMeasurementSet(): ?MeasurementSet
+    {
+        return $this->measurement_set;
+    }
+
+    public function setMeasurementSet(?MeasurementSet $measurement_set): static
+    {
+        $this->measurement_set = $measurement_set;
 
         return $this;
     }
