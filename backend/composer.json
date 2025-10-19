@@ -75,11 +75,13 @@
     },
     "require-dev": {
         "api-platform/core": "^4.2",
+        "doctrine/doctrine-fixtures-bundle": "*",
         "justinrainbow/json-schema": "^6.6",
         "phpunit/phpunit": "^12.4",
         "symfony/browser-kit": "7.3.*",
         "symfony/css-selector": "7.3.*",
         "symfony/http-client": "7.3.*",
-        "symfony/maker-bundle": "^1.64"
+        "symfony/maker-bundle": "^1.64",
+        "zenstruck/foundry": "^2.7"
     }
 }
