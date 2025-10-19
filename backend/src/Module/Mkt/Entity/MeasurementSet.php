@@ -14,19 +14,19 @@ class MeasurementSet
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['measurement_set:index'])]
+    #[Groups(['measurement_set:index', 'measurement_set:show'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['measurement_set:index'])]
+    #[Groups(['measurement_set:index', 'measurement_set:show'])]
     private ?string $title = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['measurement_set:index'])]
+    #[Groups(['measurement_set:index', 'measurement_set:show'])]
     private ?float $mkt = null;
 
     #[ORM\Column]
-    #[Groups(['measurement_set:index'])]
+    #[Groups(['measurement_set:index', 'measurement_set:show'])]
     private ?\DateTimeImmutable $created_at = null;
 
     /**

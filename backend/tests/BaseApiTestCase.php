@@ -12,6 +12,8 @@ class BaseApiTestCase extends ApiTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         self::bootKernel();
         $entityManager = self::getContainer()->get('doctrine')->getManager();
 
