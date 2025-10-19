@@ -48,7 +48,7 @@ class Paginator
             'total' => $total,
             'page' => $page,
             'limit' => $limit,
-            'pages' => ceil($total / $limit),
+            'pages' => (int) ceil($total / $limit),
         ];
     }
 }

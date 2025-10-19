@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Entity;
+namespace App\Module\Mkt\Entity;
 
-use App\Repository\MeasurementSetRepository;
+use App\Module\Mkt\Repository\MeasurementSetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MeasurementSetRepository::class)]
 class MeasurementSet
@@ -13,21 +14,25 @@ class MeasurementSet
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['measurement_set:index'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['measurement_set:index'])]
     private ?string $title = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['measurement_set:index'])]
     private ?float $mkt = null;
 
     #[ORM\Column]
+    #[Groups(['measurement_set:index'])]
     private ?\DateTimeImmutable $created_at = null;
 
     /**
      * @var Collection<int, Measurement>
      */
-    #[ORM\OneToMany(targetEntity: Measurement::class, mappedBy: 'measurement_set_id', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Measurement::class, mappedBy: 'measurement_set', orphanRemoval: true)]
     private Collection $measurements;
 
     public function __construct()
@@ -95,7 +100,7 @@ class MeasurementSet
     {
         if (!$this->measurements->contains($measurement)) {
             $this->measurements->add($measurement);
-            $measurement->setMeasurementSetId($this);
+            $measurement->setMeasurementSet($this);
         }
 
         return $this;
@@ -105,8 +110,8 @@ class MeasurementSet
     {
         if ($this->measurements->removeElement($measurement)) {
             // set the owning side to null (unless already changed)
-            if ($measurement->getMeasurementSetId() === $this) {
-                $measurement->setMeasurementSetId(null);
+            if ($measurement->getMeasurementSet() === $this) {
+                $measurement->setMeasurementSet(null);
             }
         }
 

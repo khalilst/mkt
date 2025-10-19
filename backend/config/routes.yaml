@@ -3,3 +3,9 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+mkt_controllers:
+    resource:
+        path: ../src/Module/Mkt/Controller/
+        namespace: App\Module\Mkt\Controller
+    type: attribute
