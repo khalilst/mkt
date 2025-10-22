@@ -4,6 +4,7 @@ namespace App\Module\Mkt\Entity;
 
 use App\Module\Mkt\Repository\MeasurementRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MeasurementRepository::class)]
 class Measurement
@@ -11,6 +12,7 @@ class Measurement
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['measurement:index'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'measurements')]
@@ -18,9 +20,11 @@ class Measurement
     private ?MeasurementSet $measurement_set = null;
 
     #[ORM\Column]
+    #[Groups(['measurement:index'])]
     private ?\DateTimeImmutable $measured_at = null;
 
     #[ORM\Column]
+    #[Groups(['measurement:index'])]
     private ?float $temperature = null;
 
     public function getId(): ?int

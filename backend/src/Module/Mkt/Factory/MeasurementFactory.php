@@ -36,7 +36,7 @@ final class MeasurementFactory extends PersistentProxyObjectFactory
         return [
             'measurement_set' => MeasurementSetFactory::new(),
             'temperature' => self::faker()->randomFloat(),
-            'timestamp' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'measured_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }
 
