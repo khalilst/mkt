@@ -55,8 +55,13 @@ final class MeasurementSetIndexControllerTest extends BaseApiTestCase
 
         /** @var array<MeasurementSet> $measurementSets */
         $measurementSets = array_map(
-            fn ($measurementSetProxy) => $measurementSetProxy->_real(),
+            fn($measurementSetProxy) => $measurementSetProxy->_real(),
             MeasurementSetFactory::createMany($total),
+        );
+
+        usort(
+            $measurementSets,
+            fn(MeasurementSet $a, MeasurementSet $b) => $b->getId() <=> $a->getId(),
         );
 
         // Act
@@ -64,7 +69,7 @@ final class MeasurementSetIndexControllerTest extends BaseApiTestCase
 
         // Assert
         $items = array_map(
-            fn (MeasurementSet $measurementSet) => [
+            fn(MeasurementSet $measurementSet) => [
                 'id' => $measurementSet->getId(),
                 'title' => $measurementSet->getTitle(),
                 'mkt' => $measurementSet->getMkt(),

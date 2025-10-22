@@ -22,7 +22,8 @@ final class MeasurementIndexQuery
         return Paginator::paginate(
             $this->repository->createQueryBuilder('m')
                 ->where('m.measurement_set = :measurementSetId')
-                ->setParameter('measurementSetId', $measurementSetId),
+                ->setParameter('measurementSetId', $measurementSetId)
+                ->orderBy('m.measured_at', 'ASC'),
             $page,
             $limit,
         );

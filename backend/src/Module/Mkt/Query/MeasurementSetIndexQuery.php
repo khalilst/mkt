@@ -19,7 +19,7 @@ final class MeasurementSetIndexQuery
     public function getPaginatedList(int $page = 1, ?int $limit = null): array
     {
         return Paginator::paginate(
-            $this->repository->createQueryBuilder('s'),
+            $this->repository->createQueryBuilder('s')->orderBy('s.id', 'DESC'),
             $page,
             $limit,
         );
