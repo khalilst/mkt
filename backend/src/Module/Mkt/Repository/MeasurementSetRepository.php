@@ -4,7 +4,6 @@ namespace App\Module\Mkt\Repository;
 
 use App\Module\Mkt\Entity\MeasurementSet;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,5 +22,22 @@ class MeasurementSetRepository extends ServiceEntityRepository
 
         $em->persist($measurementSet);
         $em->flush();
+    }
+
+    public function updateMkt(int $measurementSetId, float $mkt): int
+    {
+        return $this->createQueryBuilder('s')
+            // Set the value of the column
+            ->update()
+            ->set('s.mkt', ':mkt')
+            ->setParameter('mkt', $mkt)
+
+            // Filter by the primary key
+            ->where('s.id = :measurementSetId')
+            ->setParameter('measurementSetId', $measurementSetId)
+
+            // Execute the query
+            ->getQuery()
+            ->execute(); // Returns the number of affected rows
     }
 }

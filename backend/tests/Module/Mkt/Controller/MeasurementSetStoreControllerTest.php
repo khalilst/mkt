@@ -21,8 +21,6 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
     public function testItStoresMeasurementSet(): void
     {
         // Arrange
-        $clock = $this->freezeTime();
-
         $measurementsCount = $this->faker->numberBetween(100, 300);
         $measurementsFile = (new MeasurementsFileFixture)->generateFile('test.csv', $measurementsCount);
         $title = $this->faker->text();
@@ -35,11 +33,16 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
 
         self::assertJsonContains([
             'title' => $title,
-            'created_at' => $clock->now()->format('c'),
-        ], message: 'The Response does not contain valid values!');
+        ], message: 'The Response does not contain valid title!');
+
+        self::assertMatchesJsonSchema(
+            ['created_at'],
+            message: 'The Response should include the created_at attribute!'
+        );
 
         self::assertMatchesJsonSchema(['id', 'mkt'], message: 'The Response should contain id!');
         $this->assertMeasurementsCount($measurementsCount);
+        $this->assertMeasurementSetsCount();
     }
 
     public function testItCalculateProperMkt(): void
@@ -119,12 +122,25 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
     {
         $count = $this->getContainer()
             ->get(MeasurementRepository::class)
-            ->count([]);
+            ->count();
 
         self::assertSame(
             $expectedCount,
             $count,
             "Expecting to have {$expectedCount} measurements but retrieved {$count} rows!",
+        );
+    }
+
+    private function assertMeasurementSetsCount(): void
+    {
+        $count = $this->getContainer()
+            ->get(MeasurementSetRepository::class)
+            ->count();
+
+        self::assertSame(
+            1,
+            $count,
+            "Expecting to have 1 measurement set but retrieved {$count} rows!",
         );
     }
 

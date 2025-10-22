@@ -3,9 +3,7 @@
 namespace App\Module\Mkt\Action;
 
 use App\Module\Mkt\Entity\Measurement;
-use App\Module\Mkt\Entity\MeasurementSet;
 use App\Module\Mkt\Query\MeasurementChunkQuery;
-use App\Module\Mkt\Repository\MeasurementSetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 final class CalculateMktAction
@@ -22,23 +20,19 @@ final class CalculateMktAction
 
     public function __construct(
         private MeasurementChunkQuery $measurementChunkQuery,
-        private MeasurementSetRepository $measurementSetRepository,
     ) {}
 
-    public function execute(MeasurementSet $measurementSet): MeasurementSet
+    public function execute(int $measurementSetId): float
     {
         $this->measurementChunkQuery->getChunkByMeasuredAt(
-            $measurementSet->getId(),
+            $measurementSetId,
             self::CHUNK_SIZE,
             fn (ArrayCollection $measurements) => $measurements->map(
                 fn (Measurement $measurement) => $this->calculateSums($measurement),
             ),
         );
 
-        $measurementSet->setMkt(round($this->getMkt(), 2));
-        $this->measurementSetRepository->save($measurementSet);
-
-        return $measurementSet;
+        return round($this->getMkt(), 2);
     }
 
     private function calculateSums(Measurement $measurement): void

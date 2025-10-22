@@ -40,7 +40,10 @@ final class ProcessMeasurementsFileHandler
 
         $this->storeMeasurementFile($message->payload->measurementsFilePath);
 
-        $this->measurementSet = $this->calculateMktAction->execute($this->measurementSet);
+        $this->measurementSetRepository->updateMkt(
+            measurementSetId: $this->measurementSet->getId(),
+            mkt: $this->calculateMktAction->execute($this->measurementSet->getId()),
+        );
     }
 
     private function storeMeasurementFile(string $path): void
