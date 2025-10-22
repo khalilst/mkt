@@ -18,7 +18,7 @@ class Measurement
     private ?MeasurementSet $measurement_set = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $timestamp = null;
+    private ?\DateTimeImmutable $measured_at = null;
 
     #[ORM\Column]
     private ?float $temperature = null;
@@ -47,14 +47,14 @@ class Measurement
         return $this;
     }
 
-    public function getTimestamp(): ?\DateTimeImmutable
+    public function getMeasuredAt(): ?\DateTimeImmutable
     {
-        return $this->timestamp;
+        return $this->measured_at;
     }
 
-    public function setTimestamp(\DateTimeImmutable $timestamp): static
+    public function setMeasuredAt(\DateTimeImmutable $measured_at): static
     {
-        $this->timestamp = $timestamp;
+        $this->measured_at = $measured_at;
 
         return $this;
     }

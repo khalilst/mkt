@@ -1,3 +1,14 @@
+app_measurement_set_store:
+    path: /api/measurement-sets
+    controller: App\Module\Mkt\Controller\MeasurementSetStoreController
+    methods: ['POST']
+    defaults:
+        # Crucial: This tells Symfony's Request Listener to treat it as an upload
+        # It also implicitly tells API Platform not to process it as a typical resource.
+        _format: html # Use a non-json/non-ld+json format to skip decoding
+        _api_respond: 'false' # Explicitly bypass API Platform's response handler
+        _api_receive: 'false' # Explicitly bypass API Platform's request data listener
+
 api_platform:
     resource: .
     type: api_platform
