@@ -65,6 +65,12 @@ final class MeasurementIndexControllerTest extends BaseApiTestCase
             MeasurementFactory::createMany($total, ['measurement_set' => $measurementSet]),
         );
 
+        usort(
+            $measurements,
+            fn (Measurement $a, Measurement $b) =>
+                $a->getMeasuredAt()->getTimestamp() <=> $b->getMeasuredAt()->getTimestamp(),
+        );
+
         // Act
         $this->client->request('GET', "/api/measurement-sets/{$measurementSet->getId()}/measurements");
 
