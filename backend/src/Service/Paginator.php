@@ -7,7 +7,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 
 /**
  * @phpstan-type PaginationResult array{
- *     items: array<int, object>,
+ *     items: array<array-key, T>,
  *     total: int,
  *     page: int,
  *     limit: int,
