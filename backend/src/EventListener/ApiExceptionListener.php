@@ -26,13 +26,14 @@ final class ApiExceptionListener
             ? $exception->getStatusCode()
             : 500;
 
-        $message = match ($statusCode) {
-            404 => 'Resource Not Found!',
-            default => $exception->getMessage() ?: 'Server error!',
+        [$message, $errors] = match ($statusCode) {
+            404 => ['Resource Not Found!', null],
+            422 => ['Validation Error!', explode("\n", $exception->getMessage())],
+            default => [$exception->getMessage() ?: 'Server error!', null],
         };
 
         $response = new JsonResponse(
-            ['error' => $message],
+            compact('message', 'errors'),
             $statusCode,
             ['Content-Type' => 'application/json'],
         );

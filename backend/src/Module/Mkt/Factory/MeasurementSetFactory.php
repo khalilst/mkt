@@ -2,6 +2,7 @@
 
 namespace App\Module\Mkt\Factory;
 
+use App\Module\Mkt\Dto\MeasurementSetStoreDto;
 use App\Module\Mkt\Entity\MeasurementSet;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -49,5 +50,12 @@ final class MeasurementSetFactory extends PersistentProxyObjectFactory
         return $this
             // ->afterInstantiate(function(MeasurementSet $measurementSet): void {})
         ;
+    }
+
+    public function createFromStoreDto(MeasurementSetStoreDto $dto): MeasurementSet
+    {
+        return (new MeasurementSet)
+            ->setTitle($dto->title)
+            ->setCreatedAt(new \DateTimeImmutable());
     }
 }

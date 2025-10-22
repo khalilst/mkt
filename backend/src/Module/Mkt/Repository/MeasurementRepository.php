@@ -15,4 +15,9 @@ class MeasurementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Measurement::class);
     }
+
+    public function clearMemory(): void
+    {
+        $this->getEntityManager()->clear();
+    }
 }
