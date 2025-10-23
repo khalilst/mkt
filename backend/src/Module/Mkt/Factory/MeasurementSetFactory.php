@@ -35,7 +35,7 @@ final class MeasurementSetFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'title' => self::faker()->text(255),
+            'title' => self::faker()->text(30),
             'mkt' => self::faker()->randomFloat(1, 100, 400),
             'created_at' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
