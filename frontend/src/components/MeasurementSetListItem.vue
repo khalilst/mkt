@@ -1,4 +1,3 @@
-<!-- src/components/MeasurementSetTable.vue -->
 <template>
   <td>
     <router-link class="link-primary"

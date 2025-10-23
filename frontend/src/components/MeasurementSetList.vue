@@ -1,4 +1,3 @@
-<!-- src/components/MeasurementSetTable.vue -->
 <template>
   <table class="table table-hover table-striped align-middle">
     <thead class="table-light">

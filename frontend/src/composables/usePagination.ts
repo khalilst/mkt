@@ -3,13 +3,11 @@ import { type PaginationMeta, type PaginationQuery } from "@/types/pagination";
 
 const usePagination = (useQuery: PaginationQuery) => {
   const loading = ref(false);
-  const error = ref<string | null>(null);
 
   const paginationMeta = ref<PaginationMeta>({ limit: 10, page: 1 });
 
   const fetchPage = async () => {
     loading.value = true;
-    error.value = null;
 
     try {
       paginationMeta.value = await useQuery();
@@ -53,6 +51,7 @@ const usePagination = (useQuery: PaginationQuery) => {
     loading,
     next,
     prev,
+    fetchPage,
   };
 };
 
