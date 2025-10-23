@@ -34,8 +34,8 @@ const {
     fetchSets,
     next,
     prev,
-} = useMeasurementSets()
+} = useMeasurementSets();
 
-onMounted(fetchSets)
+onMounted(fetchSets);
 
 </script>
