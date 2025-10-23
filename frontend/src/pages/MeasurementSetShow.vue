@@ -29,7 +29,7 @@ const set = ref<MeasurementSet | null>(null);
 const { formatDate } = useFormatDate();
 
 const loadSet = async () => {
-    const { data } = await api.get(endpoints.mkt.measurementSetShow(id));
+    const { data } = await api.get(endpoints.mkt.measurementSetShow(id), { redirectOn404: true });
     set.value = data;
 }
 

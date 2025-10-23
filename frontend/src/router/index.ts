@@ -14,6 +14,10 @@ const routes = [
     ...pathKeys.uploadMeasurements,
     component: () => import("@/pages/UploadMeasurements.vue"),
   },
+  {
+    ...pathKeys.notFound,
+    component: () => import("@/pages/NotFound.vue"),
+  },
 ];
 
 const router = createRouter({

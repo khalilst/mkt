@@ -239,6 +239,7 @@ docker exec -ti mkt_php ./bin/phpunit
 | MeasurementSets   | `/`         | Lists all datasets with **pagination**                |
 | Measurements      | `/sets/:id` | Shows a single dataset, its measurements, and a chart |
 | Upload            | `/upload`   | Form to upload a new CSV/XML/YML dataset              |
+| Not Found         | `/*`        | For invalid paths and invalid set IDs                 |
 
 * **MeasurementSets Page**
 
