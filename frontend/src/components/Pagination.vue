@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-between align-items-center my-2">
+  <div class="d-flex justify-content-between align-items-center">
     <button class="btn border-0 page-item fs-4" @click="emit('prev')" :class="{ disabled: prevDisabled }"
       :disabled="prevDisabled">
       &laquo;

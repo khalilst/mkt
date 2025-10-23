@@ -11,10 +11,10 @@
   "dependencies": {
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
-    "chart.js": "^3.9.1",
+    "chart.js": "^4.5.1",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.22",
-    "vue-chart-3": "^3.1.8",
+    "vue-chartjs": "^5.3.2",
     "vue-router": "^4.6.3",
     "vue3-toastify": "^0.2.8",
     "yup": "^1.7.1"

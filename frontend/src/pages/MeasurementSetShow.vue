@@ -8,7 +8,7 @@
         </div>
         <div v-else class="spinner-border text-primary"></div>
 
-        <PaginatedMeasurementList v-if="set" :measurementSet="set" />
+        <MeasurementListView v-if="set" :measurementSet="set" />
     </div>
 </template>
 
@@ -19,7 +19,7 @@ import api from '@/services/api';
 import { useRoute } from 'vue-router';
 import { endpoints } from '@/shared/endpoints';
 import { useFormatDate } from '@/composables/useFormatDate';
-import PaginatedMeasurementList from '@/components/PaginatedMeasurementList.vue';
+import MeasurementListView from '@/components/MeasurementListView.vue';
 
 const route = useRoute();
 const id = Number(route.params.id);
