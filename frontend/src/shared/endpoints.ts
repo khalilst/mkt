@@ -5,6 +5,6 @@ export const endpoints = {
     measurementSetIndex: '/measurement-sets',
     measurementSetShow: (id: number) => `/measurement-sets/${id}`,
     measurementSetStore: '/measurement-sets',
-    measurementIndex: '/measurement-sets/{id}/measurement',
+    measurementIndex: (id: number) => `/measurement-sets/${id}/measurements`,
   },
 } as const;
