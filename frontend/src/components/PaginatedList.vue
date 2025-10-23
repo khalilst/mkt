@@ -1,10 +1,12 @@
 <template>
   <div>
-    <Pagination :meta="meta" @next="next" @prev="prev" />
+    <div v-if="itemsCount">
+      <Pagination :meta="meta" @next="next" @prev="prev" />
 
-    <slot v-if="itemsCount"></slot>
+      <slot v-if="itemsCount"></slot>
 
-    <Pagination :meta="meta" @next="next" @prev="prev" />
+      <Pagination :meta="meta" @next="next" @prev="prev" />
+    </div>
 
     <div v-if="!loading && !itemsCount" class="text-muted text-center my-4">
       No items found!
