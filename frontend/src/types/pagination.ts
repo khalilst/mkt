@@ -4,3 +4,5 @@ export interface PaginationMeta {
   limit: number;
   pages?: number;
 }
+
+export type PaginationQuery = () => Promise<PaginationMeta>;

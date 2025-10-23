@@ -1,15 +1,15 @@
 <template>
-    <div class="pagination d-flex justify-content-between align-items-center my-2">
-      <button class="btn border-0 page-item" @click="emit('prev')" :class="{ disabled: prevDisabled }"
-        :disabled="prevDisabled">
-        &laquo;
-      </button>
+  <div class="d-flex justify-content-between align-items-center my-2">
+    <button class="btn border-0 page-item fs-4" @click="emit('prev')" :class="{ disabled: prevDisabled }"
+      :disabled="prevDisabled">
+      &laquo;
+    </button>
 
-      <button class="btn border-0 page-item" @click="emit('next')" :class="{ disabled: nextDisabled }"
-        :disabled="nextDisabled">
-        &raquo;
-      </button>
-    </div>
+    <button class="btn border-0 page-item fs-4" @click="emit('next')" :class="{ disabled: nextDisabled }"
+      :disabled="nextDisabled">
+      &raquo;
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">

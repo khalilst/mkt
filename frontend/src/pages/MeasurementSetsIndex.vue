@@ -9,7 +9,7 @@
 
         <MeasurementSetList v-if="measurementSets.length" :measurementSets="measurementSets" />
 
-        <Pagination :meta="paginationMeta" @next="next" @prev="prev"/>
+        <Pagination :meta="paginationMeta" @next="next" @prev="prev" />
 
         <div v-if="!loading && !measurementSets.length" class="text-muted text-center my-4">
             No sets found.
@@ -24,8 +24,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import MeasurementSetList from '@/components/MeasurementSetList.vue'
-import { useMeasurementSets } from '@/composables/useMeasurementSet'
 import Pagination from '@/components/Pagination.vue'
+import useMeasurementSets from '@/composables/useMeasurementSets'
 
 const {
     measurementSets,

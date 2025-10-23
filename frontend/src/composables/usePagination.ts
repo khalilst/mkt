@@ -1,31 +1,18 @@
 import { ref } from "vue";
-import api from "@/services/api";
-import type { MeasurementSet } from "@/types/mkt";
-import { type PaginationMeta } from "@/types/pagination";
+import { type PaginationMeta, type PaginationQuery } from "@/types/pagination";
 
-export function useMeasurementSets() {
-  const measurementSets = ref<MeasurementSet[]>([]);
+const usePagination = (useQuery: PaginationQuery) => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
   const paginationMeta = ref<PaginationMeta>({ limit: 10, page: 1 });
 
-  const fetchSets = async () => {
+  const fetchPage = async () => {
     loading.value = true;
     error.value = null;
 
     try {
-      const {
-        data: { items, limit, page, total, pages },
-      } = await api.get("/measurement-sets", {
-        params: {
-          limit: paginationMeta.value.limit,
-          page: paginationMeta.value.page,
-        },
-      });
-
-      measurementSets.value = items;
-      paginationMeta.value = { limit, page, total, pages };
+      paginationMeta.value = await useQuery();
     } finally {
       loading.value = false;
     }
@@ -35,7 +22,7 @@ export function useMeasurementSets() {
     const { page, pages } = paginationMeta.value;
 
     if (page === pages) {
-        return;
+      return;
     }
 
     paginationMeta.value = {
@@ -43,14 +30,14 @@ export function useMeasurementSets() {
       page: page + 1,
     };
 
-    fetchSets();
+    fetchPage();
   };
 
   const prev = () => {
     const { page } = paginationMeta.value;
 
     if (page === 1) {
-        return;
+      return;
     }
 
     paginationMeta.value = {
@@ -58,15 +45,15 @@ export function useMeasurementSets() {
       page: page - 1,
     };
 
-    fetchSets();
+    fetchPage();
   };
 
   return {
-    measurementSets,
     paginationMeta,
     loading,
-    fetchSets,
     next,
     prev,
   };
-}
+};
+
+export default usePagination;
