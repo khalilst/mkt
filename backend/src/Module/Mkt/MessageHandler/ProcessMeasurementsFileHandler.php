@@ -4,6 +4,7 @@ namespace App\Module\Mkt\MessageHandler;
 
 use App\Module\Mkt\Action\CalculateMktAction;
 use App\Module\Mkt\Action\MeasurementBatchStoreAction;
+use App\Module\Mkt\Action\NotifyMktCalculatedAction;
 use App\Module\Mkt\Dto\MeasurementBatchStoreDto;
 use App\Module\Mkt\Dto\RawMeasurementDto;
 use App\Module\Mkt\Entity\MeasurementSet;
@@ -28,6 +29,7 @@ final class ProcessMeasurementsFileHandler
         private ValidatorInterface $validator,
         private MeasurementBatchStoreAction $measurementBatchStoreAction,
         private CalculateMktAction $calculateMktAction,
+        private NotifyMktCalculatedAction $notifyMktCalculated,
     ) {}
 
     public function __invoke(ProcessMeasurementsFile $message): void
@@ -40,10 +42,13 @@ final class ProcessMeasurementsFileHandler
 
         $this->storeMeasurementFile($message->payload->measurementsFilePath);
 
-        $this->measurementSetRepository->updateMkt(
-            measurementSetId: $this->measurementSet->getId(),
-            mkt: $this->calculateMktAction->execute($this->measurementSet->getId()),
+        $this->measurementSet->setMkt(
+            $this->calculateMktAction->execute($this->measurementSet->getId()),
         );
+
+        $this->measurementSetRepository->updateMkt($this->measurementSet);
+
+        $this->notifyMktCalculated->execute($this->measurementSet);
     }
 
     private function storeMeasurementFile(string $path): void

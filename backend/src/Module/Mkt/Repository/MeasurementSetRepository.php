@@ -24,17 +24,17 @@ class MeasurementSetRepository extends ServiceEntityRepository
         $em->flush();
     }
 
-    public function updateMkt(int $measurementSetId, float $mkt): int
+    public function updateMkt(MeasurementSet $measurementSet): int
     {
         return $this->createQueryBuilder('s')
             // Set the value of the column
             ->update()
             ->set('s.mkt', ':mkt')
-            ->setParameter('mkt', $mkt)
+            ->setParameter('mkt', $measurementSet->getMkt())
 
             // Filter by the primary key
             ->where('s.id = :measurementSetId')
-            ->setParameter('measurementSetId', $measurementSetId)
+            ->setParameter('measurementSetId', $measurementSet->getId())
 
             // Execute the query
             ->getQuery()

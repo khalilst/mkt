@@ -59,6 +59,25 @@ services:
     container_name: mkt_redis
     restart: unless-stopped
 
+  mercure:
+    image: dunglas/mercure
+    container_name: mkt_mercure
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    environment:
+      DEBUG: "debug"
+      SERVER_NAME: ":80"
+
+      MERCURE_PUBLISHER_JWT_KEY: c5eeab4c287440a7e8c5a6d0ed1fd71e
+      MERCURE_SUBSCRIBER_JWT_KEY: c5eeab4c287440a7e8c5a6d0ed1fd71e
+      MERCURE_ANONYMOUS: 1
+
+      # 👇 This overrides the default Mercure Caddyfile section
+      MERCURE_EXTRA_DIRECTIVES: |-
+        cors_origins *
+        anonymous
+
 volumes:
   mysql:
     driver: local
