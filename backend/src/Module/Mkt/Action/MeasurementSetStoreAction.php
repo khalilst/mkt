@@ -8,17 +8,18 @@ use App\Module\Mkt\Dto\MeasurementSetStoreDto;
 use App\Module\Mkt\Entity\MeasurementSet;
 use App\Module\Mkt\Event\MeasurementSetCreatedEvent;
 use App\Module\Mkt\Factory\MeasurementSetFactory;
+use App\Module\Mkt\Message\ProcessMeasurementsFile;
 use App\Module\Mkt\Repository\MeasurementSetRepository;
 use App\Module\Mkt\ValueObject\MeasurementsFilePayload;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class MeasurementSetStoreAction
 {
     public function __construct(
         private MeasurementSetFactory $factory,
         private MeasurementSetRepository $repository,
-        private EventDispatcherInterface $eventDispatcher,
+        private MessageBusInterface $bus,
     ) {}
 
     public function execute(MeasurementSetStoreDto $dto): MeasurementSet
@@ -26,8 +27,8 @@ final class MeasurementSetStoreAction
         $measurementSet = $this->factory->createFromStoreDto($dto);
         $this->repository->save($measurementSet);
 
-        $this->eventDispatcher->dispatch(
-            new MeasurementSetCreatedEvent(
+        $this->bus->dispatch(
+            new ProcessMeasurementsFile(
                 new MeasurementsFilePayload(
                     measurementSetId: $measurementSet->getId(),
                     measurementsFilePath: $this->storeMeasurementFile($dto->measurementsFile),
