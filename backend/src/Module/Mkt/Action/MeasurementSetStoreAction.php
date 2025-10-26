@@ -10,6 +10,7 @@ use App\Module\Mkt\Event\MeasurementSetCreatedEvent;
 use App\Module\Mkt\Factory\MeasurementSetFactory;
 use App\Module\Mkt\Repository\MeasurementSetRepository;
 use App\Module\Mkt\ValueObject\MeasurementsFilePayload;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class MeasurementSetStoreAction
@@ -29,12 +30,22 @@ final class MeasurementSetStoreAction
             new MeasurementSetCreatedEvent(
                 new MeasurementsFilePayload(
                     measurementSetId: $measurementSet->getId(),
-                    measurementsFilePath: $dto->measurementsFile->getPathname(),
-                    measurementsFileExtension: $dto->measurementsFile->getPathname(),
+                    measurementsFilePath: $this->storeMeasurementFile($dto->measurementsFile),
+                    measurementsFileExtension: $dto->measurementsFile->getExtension(),
                 ),
             ),
         );
 
         return $measurementSet;
+    }
+
+    private function storeMeasurementFile(UploadedFile $measurementFile): string
+    {
+        $directory = '/var/uploads';
+        $filename = uniqid() . '-' . $measurementFile->getClientOriginalName();
+
+        $measurementFile->move($directory, $filename);
+
+        return "{$directory}/$filename";
     }
 }

@@ -8,7 +8,7 @@
         </div>
         <div v-else class="spinner-border text-primary"></div>
 
-        <MeasurementListView v-if="set" :measurementSet="set" />
+        <MeasurementListView v-if="set && set.mkt !== null" :measurementSet="set" />
     </div>
 </template>
 

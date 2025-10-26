@@ -18,10 +18,12 @@ services:
         composer install &&
         php bin/console doctrine:database:create --if-not-exists &&
         php bin/console doctrine:migrations:migrate --no-interaction &&
+        php bin/console messenger:consume async -vv &
         php -S 0.0.0.0:8000 -t public
       "
     depends_on:
       - db
+      - redis
 
   db:
     image: mysql:8.0
@@ -51,6 +53,11 @@ services:
       - HOST=0.0.0.0
     depends_on:
       - php
+
+  redis:
+    image: redis:alpine
+    container_name: mkt_redis
+    restart: unless-stopped
 
 volumes:
   mysql:
