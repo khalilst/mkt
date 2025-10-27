@@ -8,6 +8,10 @@ const useMeasurementSet = (id: number) => {
   const set = ref<MeasurementSet | null>(null);
 
   const subscribeMktCalculatedEvent = () => {
+    if (set?.value?.mkt !== null) {
+      return;
+    }
+
     const eventSource = new EventSource(topics.mkt.calculated(id));
 
     eventSource.onmessage = (event) => {
