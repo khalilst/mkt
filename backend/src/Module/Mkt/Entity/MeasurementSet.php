@@ -2,9 +2,11 @@
 
 namespace App\Module\Mkt\Entity;
 
+use App\Module\Mkt\Enum\MeasurementSetStatus;
 use App\Module\Mkt\Repository\MeasurementSetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -24,6 +26,10 @@ class MeasurementSet
     #[ORM\Column(nullable: true)]
     #[Groups(['measurement_set:index', 'measurement_set:show'])]
     private ?float $mkt = null;
+
+    #[ORM\Column(type: Types::SMALLINT, enumType: MeasurementSetStatus::class)]
+    #[Groups(['measurement_set:index', 'measurement_set:show'])]
+    private MeasurementsetStatus $status = MeasurementSetStatus::InProgress;
 
     #[ORM\Column]
     #[Groups(['measurement_set:index', 'measurement_set:show'])]
@@ -72,6 +78,18 @@ class MeasurementSet
     public function setMkt(?float $mkt): static
     {
         $this->mkt = $mkt;
+
+        return $this;
+    }
+
+    public function getStatus(): MeasurementSetStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(MeasurementSetStatus $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
