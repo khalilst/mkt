@@ -21,9 +21,7 @@ final class ProcessMeasurementsFileHandler
 {
     const MAX_BATCH_SIZE = 100;
 
-    private MeasurementSet $measurementSet;
-    private int $validMeasurementCount = 0;
-    private int $totalMeasurementCount = 0;
+    private int $measurementSetId;
 
     public function __construct(
         private MeasurementSetRepository $measurementSetRepository,
@@ -35,36 +33,40 @@ final class ProcessMeasurementsFileHandler
 
     public function __invoke(ProcessMeasurementsFile $message): void
     {
-        $this->measurementSet = $this->measurementSetRepository->find($message->payload->measurementSetId);
+        $this->measurementSetId = $message->payload->measurementSetId;
+        $measurementSet = $this->measurementSetRepository->find($this->measurementSetId);
 
-        if (!$this->measurementSet) {
+        if (!$measurementSet) {
             return;
         }
 
         try {
             $this->storeMeasurementFile($message->payload->measurementsFilePath);
 
-            $this->measurementSet->setMkt(
-                $this->calculateMktAction->execute($this->measurementSet->getId()),
+            $measurementSet->setMkt(
+                $this->calculateMktAction->execute($this->measurementSetId),
             );
 
-            $this->measurementSet->setStatus(MeasurementSetStatus::Completed);
+            $measurementSet->setStatus(MeasurementSetStatus::Completed);
         } catch (\Throwable $th) {
-            $this->measurementSet->setStatus(MeasurementSetStatus::Failed);
+            $measurementSet->setStatus(MeasurementSetStatus::Failed);
         } finally {
-            $this->measurementSetRepository->updateMkt($this->measurementSet);
-            $this->notifyMktCalculated->execute($this->measurementSet);
+            $this->measurementSetRepository->updateMkt($measurementSet);
+            $this->notifyMktCalculated->execute($measurementSet);
         }
     }
 
     private function storeMeasurementFile(string $path): void
     {
+        $totalMeasurementCount = 0;
+        $validMeasurementCount = 0;
+
         $csv = Reader::from($path);
         $csv->setHeaderOffset(0);
 
         $batch = [];
         foreach ($csv->getRecords() as $record) {
-            $this->totalMeasurementCount++;
+            $totalMeasurementCount++;
 
             try {
                 $dto = RawMeasurementDto::fromRawData(
@@ -82,7 +84,7 @@ final class ProcessMeasurementsFileHandler
             }
 
             $batch[] = $dto;
-            $this->validMeasurementCount++;
+            $validMeasurementCount++;
 
             if (count($batch) === self::MAX_BATCH_SIZE) {
                 $this->storeMeasurementBatch($batch);
@@ -96,7 +98,7 @@ final class ProcessMeasurementsFileHandler
 
         unlink($path);
 
-        if (!$this->validMeasurementCount) {
+        if (!$validMeasurementCount) {
             throw new \Exception('Measurement File has no valid content!');
         }
     }
@@ -108,7 +110,7 @@ final class ProcessMeasurementsFileHandler
     {
         $this->measurementBatchStoreAction->execute(
             new MeasurementBatchStoreDto(
-                measurementSetId: $this->measurementSet->getId(),
+                measurementSetId: $this->measurementSetId,
                 batch: new ArrayCollection($batch),
             ),
         );

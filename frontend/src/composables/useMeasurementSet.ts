@@ -8,19 +8,20 @@ const useMeasurementSet = (id: number) => {
   const set = ref<MeasurementSet | null>(null);
 
   const subscribeMktCalculatedEvent = () => {
-    if (set?.value?.mkt !== null) {
+    if (set?.value?.status) {
       return;
     }
 
     const eventSource = new EventSource(topics.mkt.calculated(id));
 
     eventSource.onmessage = (event) => {
-      const { mkt } = JSON.parse(event.data);
+      const { mkt, status } = JSON.parse(event.data);
 
       if (set.value) {
         set.value.mkt = mkt;
-        eventSource.close();
+        set.value.status = status;
       }
+      eventSource.close();
     };
   };
 
