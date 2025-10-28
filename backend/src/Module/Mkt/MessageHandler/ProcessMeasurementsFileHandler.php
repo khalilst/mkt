@@ -8,6 +8,7 @@ use App\Module\Mkt\Action\NotifyMktCalculatedAction;
 use App\Module\Mkt\Dto\MeasurementBatchStoreDto;
 use App\Module\Mkt\Dto\RawMeasurementDto;
 use App\Module\Mkt\Entity\MeasurementSet;
+use App\Module\Mkt\Enum\MeasurementSetStatus;
 use App\Module\Mkt\Message\ProcessMeasurementsFile;
 use App\Module\Mkt\Repository\MeasurementSetRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -40,15 +41,20 @@ final class ProcessMeasurementsFileHandler
             return;
         }
 
-        $this->storeMeasurementFile($message->payload->measurementsFilePath);
+        try {
+            $this->storeMeasurementFile($message->payload->measurementsFilePath);
 
-        $this->measurementSet->setMkt(
-            $this->calculateMktAction->execute($this->measurementSet->getId()),
-        );
+            $this->measurementSet->setMkt(
+                $this->calculateMktAction->execute($this->measurementSet->getId()),
+            );
 
-        $this->measurementSetRepository->updateMkt($this->measurementSet);
-
-        $this->notifyMktCalculated->execute($this->measurementSet);
+            $this->measurementSet->setStatus(MeasurementSetStatus::Completed);
+        } catch (\Throwable $th) {
+            $this->measurementSet->setStatus(MeasurementSetStatus::Failed);
+        } finally {
+            $this->measurementSetRepository->updateMkt($this->measurementSet);
+            $this->notifyMktCalculated->execute($this->measurementSet);
+        }
     }
 
     private function storeMeasurementFile(string $path): void
@@ -61,7 +67,10 @@ final class ProcessMeasurementsFileHandler
             $this->totalMeasurementCount++;
 
             try {
-                $dto = RawMeasurementDto::fromRawData($record['measured_at'], $record['temprature']);
+                $dto = RawMeasurementDto::fromRawData(
+                    $record['measured_at'] ?? null,
+                    $record['temprature'] ?? null,
+                );
             } catch (\Throwable $th) {
                 continue;
             }
@@ -86,6 +95,10 @@ final class ProcessMeasurementsFileHandler
         }
 
         unlink($path);
+
+        if (!$this->validMeasurementCount) {
+            throw new \Exception('Measurement File has no valid content!');
+        }
     }
 
     /**

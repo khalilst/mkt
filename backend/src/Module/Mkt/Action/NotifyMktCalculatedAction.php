@@ -14,7 +14,10 @@ final class NotifyMktCalculatedAction
     {
         $update = new Update(
             sprintf('/measurement-sets/%d', $measurementSet->getId()),
-            json_encode(['mkt' => $measurementSet->getMkt()])
+            json_encode([
+                'mkt' => $measurementSet->getMkt(),
+                'status' => $measurementSet->getStatus()->value,
+            ]),
         );
 
         $this->hub->publish($update);

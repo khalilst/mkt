@@ -2,16 +2,18 @@
 
 namespace App\Tests\Module\Mkt\Controller;
 
+use App\Module\Mkt\Enum\MeasurementSetStatus;
 use App\Module\Mkt\Repository\MeasurementRepository;
 use App\Module\Mkt\Repository\MeasurementSetRepository;
 use App\Tests\BaseApiTestCase;
 use App\Tests\Module\Mkt\Concerns\WithUploadFile;
 use App\Tests\Module\Mkt\Fixtures\MeasurementsFileFixture;
 use App\Tests\Module\Mkt\Fixtures\MeasurementsFileWithInvalidMeasurementsFixture;
-use App\Tests\Module\Mkt\Fixtures\MeasurementsFileWithMktFixture;
+use App\Tests\Module\Mkt\Fixtures\StaticMeasurementsFileFixture;
 use Closure;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class MeasurementSetStoreControllerTest extends BaseApiTestCase
@@ -33,6 +35,7 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
 
         self::assertJsonContains([
             'title' => $title,
+            'status' => MeasurementSetStatus::Completed->value,
         ], message: 'The Response does not contain valid title!');
 
         self::assertMatchesJsonSchema(
@@ -45,10 +48,15 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
         $this->assertMeasurementSetsCount();
     }
 
-    public function testItCalculateProperMkt(): void
+    #[TestWith(['sample1.csv', 24.5])]
+    #[TestWith(['sample2.csv', 27.48])]
+    #[TestWith(['sample3.csv', 23.1])]
+    #[TestWith(['sample4.csv', 25.79])]
+    #[TestWith(['sample5.csv', 5.99])]
+    public function testItCalculateProperMkt(string $sampleName, $expectedMkt): void
     {
         // Assert
-        ['uploadedFile' => $measurementsFile, 'mkt' => $expectedMkt] = (new MeasurementsFileWithMktFixture)->generateFile('test.csv');
+        $measurementsFile = (new StaticMeasurementsFileFixture)->generateFile($sampleName);
         $title = $this->faker->text();
 
         // Act
@@ -57,6 +65,25 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
         // Assert
         self::assertResponseStatusCodeSame(201);
         self::assertMeasurementSetMkt($title, $expectedMkt);
+    }
+
+    #[TestWith(['invalid_sample1.csv'])]
+    #[TestWith(['invalid_sample2.csv'])]
+    public function testItHandlesMeasurementsFileWithInvalidContent(string $sampleName): void
+    {
+        // Assert
+        $measurementsFile = (new StaticMeasurementsFileFixture)->generateFile($sampleName);
+        $title = $this->faker->text();
+
+        // Act
+        $this->requsetMeasurementsSetEndpoint($title, $measurementsFile);
+
+        // Assert
+        self::assertResponseStatusCodeSame(201);
+        self::assertMeasurementSetMkt(
+            title: $title,
+            expectedStatus: MeasurementSetStatus::Failed,
+        );
     }
 
     public function testItExcludeInvalidMeasurementsFromMeasurementsFile(): void
@@ -144,8 +171,11 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
         );
     }
 
-    private function assertMeasurementSetMkt(string $title, float $expectedMkt): void
-    {
+    private function assertMeasurementSetMkt(
+        string $title,
+        ?float $expectedMkt = null,
+        MeasurementSetStatus $expectedStatus = MeasurementSetStatus::Completed,
+    ): void {
         $measurementSet = $this->getContainer()
             ->get(MeasurementSetRepository::class)
             ->findOneBy(compact('title'), ['id' => 'DESC']);
@@ -153,7 +183,13 @@ final class MeasurementSetStoreControllerTest extends BaseApiTestCase
         self::assertSame(
             $expectedMkt,
             $measurementSet->getMkt(),
-            "Expecting to have {$expectedMkt} MKT but retrieved {$measurementSet->getMkt()} rows!",
+            "Expecting to have {$expectedMkt} MKT but retrieved {$measurementSet->getMkt()}!",
+        );
+
+        self::assertSame(
+            $expectedStatus->value,
+            $measurementSet->getStatus()->value,
+            "Expecting to have {$expectedStatus->label()} status but retrieved {$measurementSet->getStatus()->label()}!",
         );
     }
 

@@ -14,6 +14,7 @@ enum MeasurementSetStatus: int
             self::InProgress => 'in progress',
             self::Completed => 'completed',
             self::Failed => 'failed',
+            default => 'none',
         };
     }
 }
